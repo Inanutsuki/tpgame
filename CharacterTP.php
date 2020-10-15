@@ -14,8 +14,6 @@ class CharacterTP
     const ITS_ME = 1;
     const CHARACTER_DIE = 2;
     const CHARACTER_HIT = 3;
-    const CHARACTER_LEVEL_UP = 4;
-    const CHARACTER_STRENGTH_UP = 5;
 
     // CONSTRUCT
 
@@ -133,12 +131,13 @@ class CharacterTP
         }
     }
 
+    // FUNCTION
+
+
     public function nomValide()
     {
         return !empty($this->_nameChar);
     }
-
-    // FUNCTION
 
     public function hit(CharacterTP $character)
     {
@@ -158,7 +157,6 @@ class CharacterTP
     public function receiveDamage($attacker)
     {
         $DPS = ceil(random_int ( (int) (($attacker->levelChar()*0.2)+10) , (int) (($attacker->strength() *0.2 )+10)));
-        // $attacker->_DPS = $DPS;
         $this->_damage += $DPS;
         if ($this->_damage >= 100) {
             return self::CHARACTER_DIE;
