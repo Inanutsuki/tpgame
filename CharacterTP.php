@@ -1,19 +1,25 @@
 <?php
 
-class CharacterTP
+class CharacterTP extends CharacterManagerTP
 {
 
-    private $_id;
-    private $_nameChar;
-    private $_damage;
-    private $_experience;
-    private $_levelChar;
-    private $_strength;
-    private $_DPS;
+    protected $_id;
+    protected $_nameChar;
+    protected $_damage;
+    protected $_experience;
+    protected $_levelChar;
+    protected $_strength;
+    protected $_DPS;
+    protected $_ability;
+    protected $_classChar;
+
+    // protected $_initiative;
 
     const ITS_ME = 1;
     const CHARACTER_DIE = 2;
     const CHARACTER_HIT = 3;
+    const HERO_WIN = 4;
+    const HERO_LOOSE = 5;
 
     // CONSTRUCT
 
@@ -72,6 +78,19 @@ class CharacterTP
         return $this->_DPS;
     }
 
+    public function ability()
+    {
+        return $this->_ability;
+    }
+    public function classChar()
+    {
+        return $this->_classChar;
+    }
+
+    // public function initiative()
+    // {
+    //     return $this->_initiative;
+    // }
 
 
     // SETTER
@@ -115,6 +134,7 @@ class CharacterTP
         }
     }
 
+
     public function setStrength($strength)
     {
         $strength = (int) $strength;
@@ -130,6 +150,30 @@ class CharacterTP
             $this->_DPS = $DPS;
         }
     }
+
+    public function setAbility($ability)
+    {
+        $ability = (int) $ability;
+        if ($ability >= 0 && $ability <= 100) {
+            $this->_ability = $ability;
+        }
+    }
+
+    public function setClassChar($classChar)
+    {
+        $classChar = (string) $classChar;
+        // $test = static::class;
+        // $classChar = substr(strtolower(static::class), 0, -2);
+        $this->_classChar = $classChar;
+    }
+
+    // public function setInitiative($initiative)
+    // {
+    //     $initiative = (int) $initiative;
+    //     if ($initiative >= 0) {
+    //         $this->_initiative = $initiative;
+    //     }
+    // }
 
     // FUNCTION
 
@@ -156,7 +200,8 @@ class CharacterTP
 
     public function receiveDamage($attacker)
     {
-        $DPS = ceil(random_int ( (int) (($attacker->levelChar()*0.2)+10) , (int) (($attacker->strength() *0.2 )+10)));
+        $DPS = ceil(random_int((int) (($attacker->levelChar() * 0.2) + 10), (int) (($attacker->strength() * 0.2) + 10)));
+        $this->_DPS = $DPS;
         $this->_damage += $DPS;
         if ($this->_damage >= 100) {
             return self::CHARACTER_DIE;
@@ -186,6 +231,40 @@ class CharacterTP
     public function increaseLevelChar()
     {
         ++$this->_levelChar;
-        return self::CHARACTER_LEVEL_UP;
+    }
+
+    // public function increaseAbility()
+    // {
+
+    // }
+
+    public function fight(CharacterTP $attacker, CharacterTP $badguy)
+    {
+        $attackerCount = 0;
+        $badguyCount = 0;
+        $attacker->_damage = 0;
+        while ($attacker->_damage < 100 || $badguy->_damage < 100) {
+            if ($attacker->_damage >= 100 || $badguy->_damage >= 100) {
+                if ($badguy->_damage >= 100) {
+                    return self::HERO_WIN;
+                } else {
+                    return self::HERO_LOOSE;
+                }
+            } else {
+                if ($attackerCount == $badguyCount) {
+                    $attacker->hit($badguy);
+                    ++$attackerCount;
+                    echo $attacker->nameChar() . ' a attaqué pour ' . $attacker->DPS() . '.<br>';
+                } elseif ($attackerCount > $badguyCount) {
+                    $badguy->hit($attacker);
+                    ++$badguyCount;
+                    echo $badguy->nameChar() . ' a attaqué pour ' . $badguy->DPS() . '.<br>';
+                }
+            }
+        }
+    }
+
+    public function getClassName(){
+        return substr(strtolower(static::class), 0, -2);
     }
 }

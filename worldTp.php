@@ -23,7 +23,7 @@ if (isset($_SESSION['character'])) {
 }
 
 if (isset($_POST['creer']) && isset($_POST['nameChar'])) {
-    $character = new CharacterTP(['nameChar' => $_POST['nameChar']]);
+    $character = getRandomCharacterClassInstance(['nameChar' => $_POST['nameChar']]);
     if (!$character->nomValide()) {
         $message = 'Le nom choisi est invalide.';
         unset($character);
@@ -40,18 +40,19 @@ if (isset($_POST['creer']) && isset($_POST['nameChar'])) {
         $message = 'Ce personnage n\'existe pas !';
     }
 } elseif (isset($_POST['newBadGuy'])) {
-    $characterAdd = new CharacterTP(['nameChar' => 'bad guy']);
-    $CharacterManager->addNewBadGuy($characterAdd);
-} elseif (isset($_GET['hit'])) {
+    $characterAdd = getRandomCharacterClassInstance(['nameChar' => 'bad guy']);
+
+    $CharacterManager->addNewBadGuy($characterAdd, $character);
+} elseif (isset($_GET['fight'])) {
     if (!isset($character)) {
         $message = 'Merci de créer un personnage ou de vous identifier.';
     } else {
-        if (!$CharacterManager->exists((int) $_GET['hit'])) {
+        if (!$CharacterManager->exists((int) $_GET['fight'])) {
             $message = 'Le personnage que vous voulez frapper n\'existe pas !';
         } else {
-            $characterToHit = $CharacterManager->get((int) $_GET['hit']);
+            $characterToFight = $CharacterManager->get((int) $_GET['fight']);
             $characterInfos = $CharacterManager->get($character->nameChar());
-            $retour = $character->hit($characterToHit);
+            $retour = $character->fight($character, $characterToFight);
             switch ($retour) {
                 case CharacterTP::ITS_ME:
                     $message = 'Mais pourquoi vous vous frappez !';
@@ -60,15 +61,50 @@ if (isset($_POST['creer']) && isset($_POST['nameChar'])) {
                     $message = 'Le personnage a bien été frappé !';
 
                     $CharacterManager->update($character);
-                    $CharacterManager->update($characterToHit);
+                    $CharacterManager->update($characterToFight);
                     break;
                 case CharacterTP::CHARACTER_DIE:
                     $message = 'Vous avez tué ce personnage.';
 
                     $CharacterManager->update($character);
-                    $CharacterManager->delete($characterToHit);
+                    $CharacterManager->delete($characterToFight);
+                    break;
+
+                case CharacterTP::HERO_WIN:
+                    $message = 'Votre héro a gagné !';
+
+                    $CharacterManager->update($character);
+                    $CharacterManager->delete($characterToFight);
+                    break;
+
+                case CharacterTP::HERO_LOOSE:
+                    $message = 'Votre héro a perdu !';
+
+                    $CharacterManager->update($character);
+                    $CharacterManager->delete($characterToFight);
                     break;
             }
         }
     }
+}
+
+
+
+// Utility
+function getRandomCharacterClassInstance(array $data): CharacterTP {
+    $className = getRandomCharacterClass();
+
+    return new $className($data);
+}
+
+function getRandomCharacterClass() {
+    $availableClasses = [
+        "WarriorTP", "WizardTP"
+    ];
+    $namespace = "";
+
+    $randomIndex = random_int(0, count($availableClasses) - 1);
+    $className = $availableClasses[$randomIndex];
+
+    return $namespace . "\\" . $className;
 }

@@ -21,30 +21,19 @@ class CharacterManagerTP
         $req->execute();
         $character->hydrate([
             'id' => $this->_db->lastInsertId(),
+            'classChar' => $character->getClassName(),
+            'ability' => 100,
             'damage' => 0,
             'experience' => 0,
             'levelChar' => 3,
-            'strength' => 10,
-            'DPS' => 2,
+            'strength' => 45,
+            'DPS' => 0,
         ]);
+
         $this->update($character);
     }
-
-    // public function addNewHero(CharacterTP $character)
-    // {
-    //     $req = $this->_db->prepare('INSERT INTO gamecharacter(nameChar) VALUE(:nameChar)');
-    //     $req->bindValue(':nameChar', $character->nameChar());
-    //     $req->execute();
-
-    //     $character->hydrate([
-    //         'id' => $this->_db->lastInsertId(),
-    //         'damage' => 0,
-    //         'experience' => 0,
-    //         'levelChar' => 0,
-    //         'strength' => 0,
-    //     ]);
-    // }
-    public function addNewBadGuy(CharacterTP $character)
+    
+    public function addNewBadGuy(CharacterTP $character, $heroInfos)
     {
         $req = $this->_db->prepare('INSERT INTO gamecharacter(nameChar) VALUE(:nameChar)');
         $req->bindValue(':nameChar', $character->nameChar());
@@ -52,12 +41,22 @@ class CharacterManagerTP
 
         $character->hydrate([
             'id' => $this->_db->lastInsertId(),
+            'classChar' => $character->getClassName(),
+            'ability' => 100,
             'damage' => 0,
             'experience' => 0,
-            'levelChar' => 0,
+            'levelChar' => ceil(random_int($heroInfos->levelChar()-1, $heroInfos->levelChar()+1)),
             'strength' => 0,
             'DPS' => 0,
         ]);
+        
+        $strength = (int) ($character->levelChar() * 15);
+
+        $character->hydrate([
+            'strength' => $strength
+        ]);
+
+        $this->update($character);
     }
 
     public function delete(CharacterTP $character)
@@ -96,7 +95,9 @@ class CharacterManagerTP
 
     public function update(CharacterTP $character)
     {
-        $req = $this->_db->prepare('UPDATE gamecharacter SET damage = :damage, experience = :experience, levelChar = :levelChar, strength = :strength, DPS = :DPS WHERE id = :id');
+        $req = $this->_db->prepare('UPDATE gamecharacter SET classChar = :classChar, ability = :ability, damage = :damage, experience = :experience, levelChar = :levelChar, strength = :strength, DPS = :DPS WHERE id = :id');
+        $req->bindValue(':classChar', $character->classChar(), PDO::PARAM_STR);
+        $req->bindValue(':ability', $character->ability(), PDO::PARAM_INT);
         $req->bindValue(':damage', $character->damage(), PDO::PARAM_INT);
         $req->bindValue(':experience', $character->experience(), PDO::PARAM_INT);
         $req->bindValue(':levelChar', $character->levelChar(), PDO::PARAM_INT);
