@@ -1,6 +1,7 @@
 <?php
+namespace App\Model\Entity;
 
-class CharacterTP extends CharacterManagerTP
+class Character
 {
 
     protected $_id;
@@ -183,7 +184,7 @@ class CharacterTP extends CharacterManagerTP
         return !empty($this->_nameChar);
     }
 
-    public function hit(CharacterTP $character)
+    public function hit(Character $character)
     {
         if ($character->id() == $this->id()) {
             return self::ITS_ME;
@@ -238,7 +239,7 @@ class CharacterTP extends CharacterManagerTP
 
     // }
 
-    public function fight(CharacterTP $attacker, CharacterTP $badguy)
+    public function fight(Character $attacker, Character $badguy)
     {
         $attackerCount = 0;
         $badguyCount = 0;

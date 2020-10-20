@@ -1,10 +1,10 @@
 <?php
-function classLoader($className)
-{
-    require $className . '.php';
-}
+// function classLoader($className)
+// {
+//     require $className . '.php';
+// }
 
-spl_autoload_register('classLoader');
+// spl_autoload_register('classLoader');
 
 session_start();
 if (isset($_GET['logout'])) {
@@ -13,10 +13,12 @@ if (isset($_GET['logout'])) {
     exit();
 }
 
-$db = new PDO('mysql:host=localhost;dbname=tp_game', 'root', '');
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+// $db = new PDO('mysql:host=localhost;dbname=tp_game', 'root', '');
+// $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
-$CharacterManager = new CharacterManagerTP($db);
+$db = DatabasePDO::dbConnect();
+
+$CharacterManager = new CharacterManager($db);
 
 if (isset($_SESSION['character'])) {
     $character = $_SESSION['character'];
@@ -54,30 +56,30 @@ if (isset($_POST['creer']) && isset($_POST['nameChar'])) {
             $characterInfos = $CharacterManager->get($character->nameChar());
             $retour = $character->fight($character, $characterToFight);
             switch ($retour) {
-                case CharacterTP::ITS_ME:
+                case Character::ITS_ME:
                     $message = 'Mais pourquoi vous vous frappez !';
                     break;
-                case CharacterTP::CHARACTER_HIT:
+                case Character::CHARACTER_HIT:
                     $message = 'Le personnage a bien été frappé !';
 
                     $CharacterManager->update($character);
                     $CharacterManager->update($characterToFight);
                     break;
-                case CharacterTP::CHARACTER_DIE:
+                case Character::CHARACTER_DIE:
                     $message = 'Vous avez tué ce personnage.';
 
                     $CharacterManager->update($character);
                     $CharacterManager->delete($characterToFight);
                     break;
 
-                case CharacterTP::HERO_WIN:
+                case Character::HERO_WIN:
                     $message = 'Votre héro a gagné !';
 
                     $CharacterManager->update($character);
                     $CharacterManager->delete($characterToFight);
                     break;
 
-                case CharacterTP::HERO_LOOSE:
+                case Character::HERO_LOOSE:
                     $message = 'Votre héro a perdu !';
 
                     $CharacterManager->update($character);
@@ -91,7 +93,7 @@ if (isset($_POST['creer']) && isset($_POST['nameChar'])) {
 
 
 // Utility
-function getRandomCharacterClassInstance(array $data): CharacterTP {
+function getRandomCharacterClassInstance(array $data): Character {
     $className = getRandomCharacterClass();
 
     return new $className($data);
@@ -99,7 +101,7 @@ function getRandomCharacterClassInstance(array $data): CharacterTP {
 
 function getRandomCharacterClass() {
     $availableClasses = [
-        "WarriorTP", "WizardTP"
+        "Warrior", "Wizard"
     ];
     $namespace = "";
 

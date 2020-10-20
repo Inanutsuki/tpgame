@@ -1,5 +1,10 @@
 <?php
-class CharacterManagerTP
+namespace App\Model\Manager;
+
+use \PDO;
+use App\Model\Entity\Character;
+
+class CharacterManager
 {
     private $_db;
 
@@ -13,7 +18,7 @@ class CharacterManagerTP
         $this->_db = $db;
     }
 
-    public function add(CharacterTP $character)
+    public function add(Character $character)
     {
         $req = $this->_db->prepare('INSERT INTO gamecharacter(nameChar) VALUE(:nameChar)');
         $req->bindValue(':nameChar', $character->nameChar());
@@ -33,7 +38,7 @@ class CharacterManagerTP
         $this->update($character);
     }
     
-    public function addNewBadGuy(CharacterTP $character, $heroInfos)
+    public function addNewBadGuy(Character $character, $heroInfos)
     {
         $req = $this->_db->prepare('INSERT INTO gamecharacter(nameChar) VALUE(:nameChar)');
         $req->bindValue(':nameChar', $character->nameChar());
@@ -59,7 +64,7 @@ class CharacterManagerTP
         $this->update($character);
     }
 
-    public function delete(CharacterTP $character)
+    public function delete(Character $character)
     {
         $this->_db->exec('DELETE FROM gamecharacter WHERE id=' . $character->id());
     }
@@ -70,12 +75,12 @@ class CharacterManagerTP
             $req = $this->_db->query('SELECT * FROM gamecharacter WHERE id = ' . $info);
             $data = $req->fetch(PDO::FETCH_ASSOC);
 
-            return new CharacterTP($data);
+            return new Character($data);
         } else {
             $req = $this->_db->prepare('SELECT * FROM gamecharacter WHERE nameChar = :nameChar');
             $req->execute([':nameChar' => $info]);
 
-            return new CharacterTP($req->fetch(PDO::FETCH_ASSOC));
+            return new Character($req->fetch(PDO::FETCH_ASSOC));
         }
     }
 
@@ -87,13 +92,13 @@ class CharacterManagerTP
         $req->execute([':nameChar' => $nameChar]);
 
         while ($data = $req->fetch(PDO::FETCH_ASSOC)) {
-            $characters[] = new CharacterTP($data);
+            $characters[] = new Character($data);
         }
 
         return $characters;
     }
 
-    public function update(CharacterTP $character)
+    public function update(Character $character)
     {
         $req = $this->_db->prepare('UPDATE gamecharacter SET classChar = :classChar, ability = :ability, damage = :damage, experience = :experience, levelChar = :levelChar, strength = :strength, DPS = :DPS WHERE id = :id');
         $req->bindValue(':classChar', $character->classChar(), PDO::PARAM_STR);
