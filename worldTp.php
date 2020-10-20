@@ -24,24 +24,24 @@
 //     $character = $_SESSION['character'];
 // }
 
-if (isset($_POST['creer']) && isset($_POST['nameChar'])) {
-    $character = getRandomCharacterClassInstance(['nameChar' => $_POST['nameChar']]);
-    if (!$character->nomValide()) {
-        $message = 'Le nom choisi est invalide.';
-        unset($character);
-    } elseif ($CharacterManager->exists($character->nameChar())) {
-        $message = 'Le nom du personnage est déjà pris.';
-    } else {
-        $CharacterManager->add($character);
-    }
-} elseif (isset($_POST['utiliser']) && isset($_POST['nameChar'])) {
-    if ($CharacterManager->exists($_POST['nameChar'])) {
-        $character = $CharacterManager->get($_POST['nameChar']);
-        $message = 'Vous avez sélectionné ' . $character->nameChar();
-    } else {
-        $message = 'Ce personnage n\'existe pas !';
-    }
-}
+// if (isset($_POST['creer']) && isset($_POST['nameChar'])) {
+//     $character = getRandomCharacterClassInstance(['nameChar' => $_POST['nameChar']]);
+//     if (!$character->nomValide()) {
+//         $message = 'Le nom choisi est invalide.';
+//         unset($character);
+//     } elseif ($CharacterManager->exists($character->nameChar())) {
+//         $message = 'Le nom du personnage est déjà pris.';
+//     } else {
+//         $CharacterManager->add($character);
+//     }
+// } elseif (isset($_POST['utiliser']) && isset($_POST['nameChar'])) {
+//     if ($CharacterManager->exists($_POST['nameChar'])) {
+//         $character = $CharacterManager->get($_POST['nameChar']);
+//         $message = 'Vous avez sélectionné ' . $character->nameChar();
+//     } else {
+//         $message = 'Ce personnage n\'existe pas !';
+//     }
+// }
 
 
 if (isset($_POST['newBadGuy'])) {
@@ -96,22 +96,22 @@ if (isset($_POST['newBadGuy'])) {
 
 
 // Utility
-function getRandomCharacterClassInstance(array $data): Character
-{
-    $className = getRandomCharacterClass();
+// function getRandomCharacterClassInstance(array $data): Character
+// {
+//     $className = getRandomCharacterClass();
 
-    return new $className($data);
-}
+//     return new $className($data);
+// }
 
-function getRandomCharacterClass()
-{
-    $availableClasses = [
-        "Warrior", "Wizard"
-    ];
-    $namespace = "";
+// function getRandomCharacterClass()
+// {
+//     $availableClasses = [
+//         "Warrior", "Wizard"
+//     ];
+//     $namespace = "";
 
-    $randomIndex = random_int(0, count($availableClasses) - 1);
-    $className = $availableClasses[$randomIndex];
+//     $randomIndex = random_int(0, count($availableClasses) - 1);
+//     $className = $availableClasses[$randomIndex];
 
-    return $namespace . "\\" . $className;
-}
+//     return $namespace . "\\" . $className;
+// }

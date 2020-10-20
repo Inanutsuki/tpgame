@@ -4,20 +4,8 @@ namespace App\Model\Manager;
 use \PDO;
 use App\Model\Entity\Character;
 
-class CharacterManager
+class CharacterManager extends Manager
 {
-    private $_db;
-
-    public function __construct($db)
-    {
-        $this->setDb($db);
-    }
-
-    public function setDb(PDO $db)
-    {
-        $this->_db = $db;
-    }
-
     public function add(Character $character)
     {
         $req = $this->_db->prepare('INSERT INTO gamecharacter(nameChar) VALUE(:nameChar)');

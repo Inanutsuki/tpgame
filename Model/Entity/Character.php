@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Model\Entity;
 
 class Character
@@ -265,7 +266,10 @@ class Character
         }
     }
 
-    public function getClassName(){
-        return substr(strtolower(static::class), 0, -2);
+    public function getClassName()
+    {
+        $name = str_replace("App\\Model\\Entity\\", "", static::class);
+        return $name;
+        // return substr(strtolower(static::class), 0, -2);
     }
 }

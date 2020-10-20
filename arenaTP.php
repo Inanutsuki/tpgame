@@ -14,13 +14,13 @@ require 'worldTP.php';
 </head>
 
 <body>
-    <div class="container mt-5 d-flex justify-content-center">
-        <div class="col-6">
+    <!-- <div class="container mt-5 d-flex justify-content-center">
+        <div class="col-6"> -->
             <p>Nombre de personnage créés : <?= $CharacterManager->count() ?></p>
             <?php
-            if (isset($message) || isset($messageUP) || (isset($message) && isset($messageUP))) {
-                echo '<p>' . $message . ' ' . isset($messageUP) . '</p>';
-            }
+            // if (isset($message) || isset($messageUP) || (isset($message) && isset($messageUP))) {
+            //     echo '<p>' . $message . ' ' . isset($messageUP) . '</p>';
+            // }
             if (isset($character)) {
             ?>
                 <p><a href="?logout=1">Déconnexion</a></p>
@@ -55,7 +55,7 @@ require 'worldTP.php';
             <?php
             } else {
             ?>
-                <form action="" method="post">
+                <!-- <form action="" method="post">
                     <div class="form-row align-items-center">
                         <div class="col-6">
                             <label class="sr-only" for="inlineFormInput">Nom</label>
@@ -64,7 +64,7 @@ require 'worldTP.php';
                             <input class="mb-2" type="submit" value="Utiliser ce personnage" name="utiliser">
                         </div>
                     </div>
-                </form>
+                </form> -->
             <?php
             }
             ?>

@@ -2,7 +2,11 @@
 
 namespace App\Controller;
 
+use App\Model\Traits\EntityHelperTrait;
+
 class BaseController {
+
+    use EntityHelperTrait;
 
     protected function render($templateName, array $templateData = [], $baseLayout = "base.html.php"){
         extract($templateData);
