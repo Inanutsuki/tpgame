@@ -6,23 +6,23 @@
 
 // spl_autoload_register('classLoader');
 
-session_start();
-if (isset($_GET['logout'])) {
-    session_destroy();
-    header('Location: arenaTP.php');
-    exit();
-}
+// session_start();
+// if (isset($_GET['logout'])) {
+//     session_destroy();
+//     header('Location: arenaTP.php');
+//     exit();
+// }
 
 // $db = new PDO('mysql:host=localhost;dbname=tp_game', 'root', '');
 // $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
-$db = DatabasePDO::dbConnect();
+// $db = DatabasePDO::dbConnect();
 
-$CharacterManager = new CharacterManager($db);
+// $CharacterManager = new CharacterManager($db);
 
-if (isset($_SESSION['character'])) {
-    $character = $_SESSION['character'];
-}
+// if (isset($_SESSION['character'])) {
+//     $character = $_SESSION['character'];
+// }
 
 if (isset($_POST['creer']) && isset($_POST['nameChar'])) {
     $character = getRandomCharacterClassInstance(['nameChar' => $_POST['nameChar']]);
@@ -41,7 +41,10 @@ if (isset($_POST['creer']) && isset($_POST['nameChar'])) {
     } else {
         $message = 'Ce personnage n\'existe pas !';
     }
-} elseif (isset($_POST['newBadGuy'])) {
+}
+
+
+if (isset($_POST['newBadGuy'])) {
     $characterAdd = getRandomCharacterClassInstance(['nameChar' => 'bad guy']);
 
     $CharacterManager->addNewBadGuy($characterAdd, $character);
@@ -93,13 +96,15 @@ if (isset($_POST['creer']) && isset($_POST['nameChar'])) {
 
 
 // Utility
-function getRandomCharacterClassInstance(array $data): Character {
+function getRandomCharacterClassInstance(array $data): Character
+{
     $className = getRandomCharacterClass();
 
     return new $className($data);
 }
 
-function getRandomCharacterClass() {
+function getRandomCharacterClass()
+{
     $availableClasses = [
         "Warrior", "Wizard"
     ];
