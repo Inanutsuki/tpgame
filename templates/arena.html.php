@@ -1,13 +1,9 @@
-<p><a href="index.php?action=lobby">Quitter le combat !</a></p>
-<?php
-if (isset($message) || isset($messageUP) || (isset($message) && isset($messageUP))) {
-    echo '<p>' . $message . ' ' . isset($messageUP) . '</p>';
-}
-?>
+<p><a href="index.php?action=logout">Quitter le combat !</a></p>
 
-<form action="" method="post">
+
+<form action="index.php?action=createBadGuy" method="post">
     <div class="form-row">
-        <input type="submit" value="Entrer dans l'arène" name="newBadGuy">
+        <input type="submit" value="Créer un méchant" name="newBadGuy">
     </div>
 </form>
 <legend>Mes informations</legend>
@@ -23,11 +19,19 @@ if (isset($message) || isset($messageUP) || (isset($message) && isset($messageUP
 <legend>Qui frapper ?</legend>
 <p>
     <?php
-    if (empty($character)) {
+    if (empty($characters)) {
         echo 'Personne à frapper !';
     } else {
         foreach ($characters as $opponent) {
-            echo '<button type="button" class="btn btn-dark"><a style="color:white;" href="?fight=' . $opponent->id() . '">' . htmlspecialchars($opponent->nameChar()) . '</a></button> (classe : ' . $opponent->classChar() . ' dégâts : ' . $opponent->damage() . ', force : ' . $opponent->strength() . ', level : ' . $opponent->levelChar() . ', DGT : ' . (int) (($opponent->levelChar() * 0.2) + 10) . ' - ' . (int) (($opponent->strength() * 0.2) + 10) . ' )<br />';
+            echo '<button type="button" class="btn btn-dark"><a style="color:white;" href="index.php?action=fight&fight=' . $opponent->id() . '">' . htmlspecialchars($opponent->nameChar()) . '</a></button> (classe : ' . $opponent->classChar() . ' dégâts : ' . $opponent->damage() . ', force : ' . $opponent->strength() . ', level : ' . $opponent->levelChar() . ', DGT : ' . (int) (($opponent->levelChar() * 0.2) + 10) . ' - ' . (int) (($opponent->strength() * 0.2) + 10) . ' )<br />';
+        }
+    }
+    ?>
+    <p>Log du combat :</p>
+    <?php 
+    if (isset($logFight)) {
+        foreach ($logFight as $logMessage) {
+            echo '<p>' . $logMessage . '</p>';
         }
     }
     ?>

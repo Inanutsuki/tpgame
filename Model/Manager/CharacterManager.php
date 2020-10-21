@@ -63,12 +63,12 @@ class CharacterManager extends Manager
             $req = $this->_db->query('SELECT * FROM gamecharacter WHERE id = ' . $info);
             $data = $req->fetch(PDO::FETCH_ASSOC);
 
-            return new Character($data);
+            return Character::factoryCreateFromData($data);
         } else {
             $req = $this->_db->prepare('SELECT * FROM gamecharacter WHERE nameChar = :nameChar');
             $req->execute([':nameChar' => $info]);
 
-            return new Character($req->fetch(PDO::FETCH_ASSOC));
+            return Character::factoryCreateFromData($req->fetch(PDO::FETCH_ASSOC));
         }
     }
 
@@ -80,7 +80,7 @@ class CharacterManager extends Manager
         $req->execute([':nameChar' => $nameChar]);
 
         while ($data = $req->fetch(PDO::FETCH_ASSOC)) {
-            $characters[] = new Character($data);
+            $characters[] = Character::factoryCreateFromData($data);
         }
 
         return $characters;

@@ -240,8 +240,9 @@ class Character
 
     // }
 
-    public function fight(Character $attacker, Character $badguy)
+    public function fight(Character $attacker, Character $badguy, array &$logFight)
     {
+        $logFight = [];
         $attackerCount = 0;
         $badguyCount = 0;
         $attacker->_damage = 0;
@@ -256,11 +257,15 @@ class Character
                 if ($attackerCount == $badguyCount) {
                     $attacker->hit($badguy);
                     ++$attackerCount;
-                    echo $attacker->nameChar() . ' a attaqué pour ' . $attacker->DPS() . '.<br>';
+                    $logMessage = $attacker->nameChar() . ' a attaqué pour ' . $attacker->DPS();
+                    $logFight[] = $logMessage;
+                    // echo $attacker->nameChar() . ' a attaqué pour ' . $attacker->DPS() . '.<br>';
                 } elseif ($attackerCount > $badguyCount) {
                     $badguy->hit($attacker);
                     ++$badguyCount;
-                    echo $badguy->nameChar() . ' a attaqué pour ' . $badguy->DPS() . '.<br>';
+                    $logMessage = $badguy->nameChar() . ' a attaqué pour ' . $badguy->DPS();
+                    $logFight[] = $logMessage;
+                    // echo $badguy->nameChar() . ' a attaqué pour ' . $badguy->DPS() . '.<br>';
                 }
             }
         }
@@ -271,5 +276,13 @@ class Character
         $name = str_replace("App\\Model\\Entity\\", "", static::class);
         return $name;
         // return substr(strtolower(static::class), 0, -2);
+    }
+
+
+    public static function factoryCreateFromData(array $data){
+        $className = $data['classChar'];
+        $fullClassName = "App\\Model\\Entity\\" . $className;
+
+        return new $fullClassName($data);
     }
 }

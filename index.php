@@ -1,41 +1,48 @@
-<?php 
+<?php
+
 /**
  * Controller frontal (Routing)
  */
+require_once 'autoload.php';
 
 session_start();
 if (isset($_GET['logout'])) {
     session_destroy();
-    header('Location: arenaTP.php');
+    header('Location: index.php?action=lobby');
     exit();
 }
 
 use App\Controller\AppController;
 
-require_once 'autoload.php';
+
 
 $action = "home";
-if(isset($_GET["action"])){
+if (isset($_GET["action"])) {
     $action = $_GET["action"];
 }
 
 $ctrl = new AppController();
 
-if (isset($_SESSION['character'])) {
-    $ctrl->setCharacter($_SESSION['character']);
-}
-
-switch($action){
+switch ($action) {
     case "home":
         $ctrl->home();
-    break;
+        break;
     case "lobby":
         $ctrl->lobby();
-    break;
+        break;
     case "arena":
         $ctrl->arena();
-    break;
+        break;
+    case "createBadGuy":
+        $ctrl->addNewBadGuy();
+        break;
+        case "fight":
+            $ctrl->startFight();
+            break;
+    case "logout":
+        header('Location: logout.php');
+        break;
     default:
         $ctrl->error404();
-    break;
+        break;
 }

@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Model\Entity\Character;
 use App\Model\Manager\CharacterManager;
 use App\Model\Service\LobbyService;
+use App\Model\Service\ArenaService;
+
 
 class AppController extends BaseController
 {
@@ -42,6 +44,7 @@ class AppController extends BaseController
                     ];
                     $this->render("lobby.html.php", $data);
                 } else {
+                    $_SESSION['character'] = $character;
                     $characters = $CharacterManager->getList($_POST['nameChar']);
                     $data = [
                         'character' => $character,
@@ -62,6 +65,7 @@ class AppController extends BaseController
                         'message' => $message,
                         'countHero' => $countHero,
                     ];
+                    $_SESSION['character'] = $character;
                     $this->render("lobby.html.php", $data);
                 }
             } else {
@@ -71,14 +75,46 @@ class AppController extends BaseController
                         'character' => $character,
                         'characters' => $characters,
                     ];
-                    $this->render("arena.html.php", $data);
+                    $_SESSION['character'] = $character;
+                    $this->render('arena.html.php', $data);
                 }
             }
         }
     }
+
+    public function addNewBadGuy()
+    {
+        $ArenaService = new ArenaService;
+        $CharacterManager = $this->getManager(Character::class);
+
+        $character = $_SESSION['character'];
+        $nameChar = $character->nameChar();
+        $ArenaService->prepareNewBadGuy($character);
+        $characters = $CharacterManager->getList($nameChar);
+        $data = [
+            'character' => $character,
+            'characters' => $characters,
+        ];
+        $_SESSION['character'] = $character;
+        $this->render('arena.html.php', $data);
+    }
+
     public function startFight()
     {
-        
+        $ArenaService = new ArenaService;
+        $CharacterManager = $this->getManager(Character::class);
+        $character = $_SESSION['character'];
+        $nameChar = $character->nameChar();
+        $logFight = [];
+        $ArenaService->prepareToFight($character, $logFight);
+        $characters = $CharacterManager->getList($nameChar);
+        $data = [
+            'character' => $character,
+            'characters' => $characters,
+            'logFight' => $logFight,
+        ];
+        $_SESSION['character'] = $character;
+        $this->render('arena.html.php', $data);
     }
 
     public function error404()
@@ -91,13 +127,4 @@ class AppController extends BaseController
     {
         return $this->_character;
     }
-
-    public function setCharacter(Character $char)
-    {
-        $this->_character = $char;
-
-        return $this;
-    }
-
-    
 }
