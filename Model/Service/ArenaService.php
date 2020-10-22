@@ -39,16 +39,13 @@ class ArenaService
                     switch ($retour) {
                         case Character::ITS_ME:
                             $outMessage = 'Mais pourquoi vous vous frappez !';
+                            $logFight[] = $outMessage;
                             break;
                         case Character::CHARACTER_HIT:
-                            $outMessage = 'Le personnage a bien été frappé !';
-
                             $CharacterManager->update($character);
                             $CharacterManager->update($characterToFight);
                             break;
                         case Character::CHARACTER_DIE:
-                            $outMessage = 'Vous avez tué ce personnage.';
-
                             $CharacterManager->update($character);
                             $CharacterManager->delete($characterToFight);
                             break;

@@ -2,7 +2,7 @@
 
 namespace App\Model\Entity;
 
-class Character
+abstract class Character
 {
 
     protected $_id;
@@ -164,8 +164,6 @@ class Character
     public function setClassChar($classChar)
     {
         $classChar = (string) $classChar;
-        // $test = static::class;
-        // $classChar = substr(strtolower(static::class), 0, -2);
         $this->_classChar = $classChar;
     }
 
@@ -190,8 +188,8 @@ class Character
         if ($character->id() == $this->id()) {
             return self::ITS_ME;
         }
-
-        $characterState = $character->receiveDamage($this);
+        $ability = 0;
+        $characterState = $character->receiveDamage($this, $ability);
 
         if ($characterState == self::CHARACTER_DIE) {
             $this->increaseExperience();
@@ -200,15 +198,19 @@ class Character
         return $characterState;
     }
 
-    public function receiveDamage($attacker)
+    public function receiveDamage($attacker, int &$ability)
     {
-        $DPS = ceil(random_int((int) (($attacker->levelChar() * 0.2) + 10), (int) (($attacker->strength() * 0.2) + 10)));
-        $this->_DPS = $DPS;
+        $DPS = $this->computeHitDamage($attacker, $ability);
+        $attacker->_DPS = $DPS;
         $this->_damage += $DPS;
         if ($this->_damage >= 100) {
             return self::CHARACTER_DIE;
         }
         return self::CHARACTER_HIT;
+    }
+
+    protected function computeHitDamage($attacker, $ability){
+        return ceil((random_int((int) (($attacker->levelChar() * 0.2) + 10), (int) (($attacker->strength() * 0.2) + 10)) + $ability));
     }
 
 
@@ -259,13 +261,11 @@ class Character
                     ++$attackerCount;
                     $logMessage = $attacker->nameChar() . ' a attaqué pour ' . $attacker->DPS();
                     $logFight[] = $logMessage;
-                    // echo $attacker->nameChar() . ' a attaqué pour ' . $attacker->DPS() . '.<br>';
                 } elseif ($attackerCount > $badguyCount) {
                     $badguy->hit($attacker);
                     ++$badguyCount;
                     $logMessage = $badguy->nameChar() . ' a attaqué pour ' . $badguy->DPS();
                     $logFight[] = $logMessage;
-                    // echo $badguy->nameChar() . ' a attaqué pour ' . $badguy->DPS() . '.<br>';
                 }
             }
         }
@@ -275,11 +275,11 @@ class Character
     {
         $name = str_replace("App\\Model\\Entity\\", "", static::class);
         return $name;
-        // return substr(strtolower(static::class), 0, -2);
     }
 
 
-    public static function factoryCreateFromData(array $data){
+    public static function factoryCreateFromData(array $data)
+    {
         $className = $data['classChar'];
         $fullClassName = "App\\Model\\Entity\\" . $className;
 
